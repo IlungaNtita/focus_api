@@ -16,13 +16,15 @@ class TaskInput(graphene.InputObjectType):
     title = graphene.String()
     description = graphene.String()
     user = graphene.ID()
-    time = graphene.Int()
+    hours = graphene.Int()
+    minutes = graphene.Int()
+    seconds = graphene.Int()
     status = graphene.String()
 
 
 class TaskCreate(graphene.Mutation):
-    """Creating an object for Page."""
-    page = graphene.Field(TaskType)
+    """Creating an object for Task."""
+    task = graphene.Field(TaskType)
 
     class Arguments:
         input = TaskInput()
@@ -32,8 +34,9 @@ class TaskCreate(graphene.Mutation):
         task = Task(
             title=input.title,
             description=input.description,
-            status=input.status,
-            time=input.time,
+            hours=input.hour,
+            minutes=input.minute,
+            seconds=input.second,
             user=input.user)
         task.save()
         return TaskCreate(task=task)
@@ -49,6 +52,9 @@ class Query(graphene.ObjectType):
         return Task.objects.all()
 
     def resolve_task(root, info, task_id):
+        return Task.objects.get(pk=task_id)
+
+    def resolve_user_task(root, info, task_id):
         return Task.objects.get(pk=task_id)
 
 
