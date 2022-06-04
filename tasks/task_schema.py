@@ -34,12 +34,47 @@ class TaskCreate(graphene.Mutation):
         task = Task(
             title=input.title,
             description=input.description,
-            hours=input.hour,
-            minutes=input.minute,
-            seconds=input.second,
-            user=input.user)
+            hours=input.hours,
+            minutes=input.minutes,
+            seconds=input.seconds,
+            user_id=input.user)
         task.save()
         return TaskCreate(task=task)
+
+
+class TaskUpdate(graphene.Mutation):
+    """Creating an object for Task."""
+    task = graphene.Field(TaskType)
+
+    class Arguments:
+        input = TaskInput()
+
+    @staticmethod
+    def mutate(self, info, input, **kwargs):
+        task = Task.objects.get(pk=id)
+        task.title = input.title,
+        task.description = input.description,
+        task.hours = input.hours,
+        task.minutes = input.minutes,
+        task.seconds = input.seconds,
+        task.icon = input.icon,
+        task.status = input.status,
+        task.save()
+        # Notice we return an instance of this mutation
+        return TaskUpdate(task=task)
+
+
+class TaskDelete(graphene.Mutation):
+    ok = graphene.Boolean()
+
+    class Arguments:
+        id = graphene.ID()
+
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+        obj = Task.objects.get(pk=kwargs["id"])
+        obj.delete()
+        return cls(ok=True)
 
 
 class Query(graphene.ObjectType):
@@ -61,6 +96,8 @@ class Query(graphene.ObjectType):
 class Mutation(graphene.ObjectType):
     """Initializing all mutations"""
     task_create = TaskCreate.Field()
+    task_update = TaskUpdate.Field()
+    task_delete = TaskDelete.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
