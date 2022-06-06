@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,16 +22,38 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%rp$-e!52^j%p0!mqta-yj5)%twbgta^+6b%0e1r*q$^!o(010'
-
+# SECRET_KEY = '%rp$-e!52^j%p0!mqta-yj5)%twbgta^+6b%0e1r*q$^!o(010'
+# this is to replace the secret key you cut away before
+SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
 GRAPHENE = {
-    "SCHEMA": "focus_api.schema.schema"
+    "SCHEMA": "focus_api.schema.schema",
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
 }
+
+# Defines JWT settings and auth backends
+# You'll notice we've defined app.utils.jwt_payload - we'll be reviewing it below as well.
+GRAPHQL_JWT = {
+    'JWT_PAYLOAD_HANDLER': 'app.utils.jwt_payload',
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+    'JWT_SECRET_KEY': config("SECRET_KEY"),
+    'JWT_ALGORITHM': 'HS256',
+}
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 # Application definition
 
