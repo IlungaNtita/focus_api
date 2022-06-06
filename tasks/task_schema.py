@@ -20,6 +20,7 @@ class TaskInput(graphene.InputObjectType):
     minutes = graphene.Int()
     seconds = graphene.Int()
     status = graphene.String()
+    icon = graphene.String()
 
 
 class TaskCreate(graphene.Mutation):
@@ -35,6 +36,8 @@ class TaskCreate(graphene.Mutation):
             title=input.title,
             description=input.description,
             hours=input.hours,
+            status=input.status,
+            icon=input.icon,
             minutes=input.minutes,
             seconds=input.seconds,
             user_id=input.user)
@@ -48,17 +51,46 @@ class TaskUpdate(graphene.Mutation):
 
     class Arguments:
         input = TaskInput()
+        id = graphene.ID(
+            required=True, description="ID of a task to update.")
 
     @staticmethod
-    def mutate(self, info, input, **kwargs):
-        task = Task.objects.get(pk=id)
-        task.title = input.title,
-        task.description = input.description,
-        task.hours = input.hours,
-        task.minutes = input.minutes,
-        task.seconds = input.seconds,
-        task.icon = input.icon,
-        task.status = input.status,
+    def mutate(self, info, id, input, **kwargs):
+        task = Task.objects.get(id=id)
+        if input.hours == None:
+            task.title = input.title
+            task.description = input.description
+            task.save()
+        else:
+            task.title = input.title
+            task.description = input.description
+            task.hours = input.hours
+            task.minutes = input.minutes
+            task.seconds = input.seconds
+            task.icon = input.icon
+            task.status = input.status
+            task.save()
+        # Notice we return an instance of this mutation
+        return TaskUpdate(task=task)
+
+
+class TaskUpdateTime(graphene.Mutation):
+    """Creating an object for Task."""
+    task = graphene.Field(TaskType)
+
+    class Arguments:
+        input = TaskInput()
+        id = graphene.ID(
+            required=True, description="ID of a task to update.")
+
+    @staticmethod
+    def mutate(self, info, id, input, **kwargs):
+        task = Task.objects.get(id=id)
+        task.hours = input.hours
+        task.minutes = input.minutes
+        task.seconds = input.seconds
+        task.icon = input.icon
+        task.status = input.status
         task.save()
         # Notice we return an instance of this mutation
         return TaskUpdate(task=task)
@@ -98,6 +130,7 @@ class Mutation(graphene.ObjectType):
     task_create = TaskCreate.Field()
     task_update = TaskUpdate.Field()
     task_delete = TaskDelete.Field()
+    task_update_time = TaskUpdateTime.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
