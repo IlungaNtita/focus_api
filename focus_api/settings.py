@@ -39,16 +39,16 @@ GRAPHENE = {
 
 # Defines JWT settings and auth backends
 # You'll notice we've defined app.utils.jwt_payload - we'll be reviewing it below as well.
-GRAPHQL_JWT = {
-    'JWT_PAYLOAD_HANDLER': 'app.utils.jwt_payload',
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-    'JWT_VERIFY_EXPIRATION': True,
-    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
-    'JWT_SECRET_KEY': config("SECRET_KEY"),
-    'JWT_ALGORITHM': 'HS256',
-}
+# GRAPHQL_JWT = {
+#     'JWT_PAYLOAD_HANDLER': 'focus_api.utils.jwt_payload',
+#     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+#     'JWT_VERIFY_EXPIRATION': True,
+#     'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+#     'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
+#     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+#     'JWT_SECRET_KEY': config("SECRET_KEY"),
+#     'JWT_ALGORITHM': 'HS256',
+# }
 AUTHENTICATION_BACKENDS = [
     'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -117,18 +117,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 

@@ -1,6 +1,6 @@
 import graphene
 from graphene_django import DjangoObjectType
-from tasks.models import Task
+from tasks.models import Sprint, Task
 
 
 class TaskType(DjangoObjectType):
@@ -21,6 +21,7 @@ class TaskInput(graphene.InputObjectType):
     seconds = graphene.Int()
     status = graphene.String()
     icon = graphene.String()
+    task_sprint = graphene.ID()
 
 
 class TaskCreate(graphene.Mutation):
@@ -40,7 +41,9 @@ class TaskCreate(graphene.Mutation):
             icon=input.icon,
             minutes=input.minutes,
             seconds=input.seconds,
-            user_id=input.user)
+            user_id=input.user,
+            task_sprint_id=input.task_sprint,
+        )
         task.save()
         return TaskCreate(task=task)
 
@@ -114,6 +117,10 @@ class Query(graphene.ObjectType):
     all_tasks = graphene.List(TaskType)
     task = graphene.Field(
         TaskType, task_id=graphene.Int())
+    sprint_task = graphene.Field(
+        TaskType, sprint_id=graphene.Int())
+    user_task = graphene.Field(
+        TaskType, user_id=graphene.Int())
 
     def resolve_all_tasks(root, info):
         return Task.objects.all()
@@ -121,8 +128,11 @@ class Query(graphene.ObjectType):
     def resolve_task(root, info, task_id):
         return Task.objects.get(pk=task_id)
 
-    def resolve_user_task(root, info, task_id):
-        return Task.objects.get(pk=task_id)
+    def resolve_user_task(root, info, user_id):
+        return Task.objects.get(user_id=user_id)
+
+    def resolve_sprint_task(root, info, sprint_id):
+        return Task.objects.get(task_sprint_id=sprint_id)
 
 
 class Mutation(graphene.ObjectType):
