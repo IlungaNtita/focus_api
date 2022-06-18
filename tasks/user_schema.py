@@ -30,7 +30,7 @@ class CreateUser(graphene.Mutation):
     user = graphene.Field(UserType)
     profile = graphene.Field(UserProfile)
     token = graphene.String()
-    refresh_token = graphene.String()
+    # refresh_token = graphene.String()
 
     class Arguments:
         username = graphene.String(required=True)
@@ -47,9 +47,10 @@ class CreateUser(graphene.Mutation):
 
         profile_obj = profile.objects.get(user=user.id)
         token = get_token(user)
-        refresh_token = create_refresh_token(user)
+        # refresh_token = create_refresh_token(user)
 
-        return CreateUser(user=user, profile=profile_obj, token=token, refresh_token=refresh_token)
+        # refresh_token=refresh_token
+        return CreateUser(user=user, profile=profile_obj, token=token)
 
 # Finalize creating mutation for schema
 

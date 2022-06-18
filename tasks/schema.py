@@ -1,5 +1,4 @@
 import graphene
-# from .schema.task_schema import schema as task
 from .task_schema import schema as task
 from .user_schema import schema as user
 from .sprint_schema import schema as sprint
